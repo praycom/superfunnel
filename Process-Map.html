@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuperFunnel — Process Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:      #0C1117;
+  --s1:      #141B24;
+  --s2:      #1B2535;
+  --border:  rgba(255,255,255,.07);
+  --border2: rgba(255,255,255,.13);
+  --white:   #EEF2F7;
+  --dim:     #7A8899;
+  --dim2:    #4D5B6E;
+  --gold:    #F4A940;
+  --gold-d:  rgba(244,169,64,.13);
+  --sky:     #38BDF8;
+  --sky-d:   rgba(56,189,248,.11);
+  --green:   #34D399;
+  --green-d: rgba(52,211,153,.11);
+  --red:     #F87171;
+  --red-d:   rgba(248,113,113,.1);
+  --amber:   #FBBF24;
+  --amber-d: rgba(251,191,36,.1);
+  --purple:  #A78BFA;
+  --purple-d:rgba(167,139,250,.1);
+  --indigo:  #6366F1;
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  font-family:'Inter',sans-serif;
+  color:var(--white);
+  min-height:100vh;
+  padding:0 0 80px;
+}
+
+/* ══════════════════════════
+   UTILITIES
+══════════════════════════ */
+.mono{ font-family:'JetBrains Mono',monospace; }
+.sora{ font-family:'Sora',sans-serif; }
+.dim { color:var(--dim); }
+.gold{ color:var(--gold); }
+.sky { color:var(--sky);  }
+.green{color:var(--green);}
+.red  { color:var(--red); }
+.amber{ color:var(--amber);}
+
+.label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.62rem; letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.pill{
+  display:inline-flex; align-items:center;
+  padding:.2rem .6rem; border-radius:99px;
+  font-size:.65rem; font-weight:600; letter-spacing:.03em;
+  gap:.25rem; white-space:nowrap;
+}
+.pill-gold  { background:rgba(244,169,64,.14);  color:var(--gold);  }
+.pill-sky   { background:rgba(56,189,248,.12);   color:var(--sky);   }
+.pill-green { background:rgba(52,211,153,.12);   color:var(--green); }
+.pill-red   { background:rgba(248,113,113,.12);  color:var(--red);   }
+.pill-amber { background:rgba(251,191,36,.12);   color:var(--amber); }
+.pill-dim   { background:rgba(255,255,255,.07);  color:var(--dim);   }
+.pill-purple{ background:rgba(167,139,250,.12);  color:var(--purple);}
+
+/* ══════════════════════════
+   PAGE WRAPPER
+══════════════════════════ */
+.page{ max-width:1380px; margin:0 auto; padding:0 40px; }
+
+/* ══════════════════════════
+   HEADER
+══════════════════════════ */
+header{
+  background:linear-gradient(135deg,#0F1B2D 0%,#0C1117 60%);
+  border-bottom:1px solid var(--border2);
+  padding:36px 0 32px;
+  margin-bottom:0;
+}
+header .page{ display:flex; align-items:center; justify-content:space-between; gap:2rem; }
+.hdr-left .eyebrow{ color:var(--gold); margin-bottom:.5rem; }
+.hdr-left h1{
+  font-family:'Sora',sans-serif; font-size:2.1rem; font-weight:800;
+  line-height:1.1; color:var(--white);
+}
+.hdr-left h1 span{ color:var(--gold); }
+.hdr-left p{ font-size:.88rem; color:var(--dim); margin-top:.45rem; }
+.hdr-stats{
+  display:flex; gap:1.5rem; flex-shrink:0;
+}
+.hdr-stat{
+  text-align:center;
+  background:var(--s1); border:1px solid var(--border2);
+  border-radius:10px; padding:.9rem 1.4rem;
+}
+.hdr-stat .sv{ font-family:'Sora',sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold); }
+.hdr-stat .sl{ font-size:.68rem; color:var(--dim); margin-top:.2rem; }
+
+/* ══════════════════════════
+   SECTION SHELLS
+══════════════════════════ */
+.map-section{
+  padding:40px 0 0;
+}
+.section-header{
+  display:flex; align-items:center; gap:1rem;
+  margin-bottom:20px;
+}
+.section-tag{
+  background:var(--s1); border:1px solid var(--border2);
+  border-radius:6px; padding:.3rem .8rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.62rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--dim);
+}
+.section-title{
+  font-family:'Sora',sans-serif; font-size:1rem; font-weight:700;
+  color:var(--white);
+}
+.section-rule{
+  flex:1; height:1px; background:var(--border);
+}
+
+/* ══════════════════════════
+   PHASE 1 — TRIGGER + GATE
+══════════════════════════ */
+.trigger-row{
+  display:flex; align-items:stretch; gap:0;
+}
+
+/* node blocks */
+.trigger-node{
+  background:var(--s1); border:1px solid var(--border2);
+  border-radius:12px; padding:1.4rem 1.6rem;
+  flex-shrink:0;
+}
+.tn-label{ margin-bottom:.55rem; }
+.tn-title{ font-family:'Sora',sans-serif; font-size:1rem; font-weight:700; color:var(--white); margin-bottom:.3rem; }
+.tn-sub  { font-size:.78rem; color:var(--dim); line-height:1.5; }
+
+/* automation node */
+.auto-node{
+  background:rgba(52,211,153,.06);
+  border:1px solid rgba(52,211,153,.22);
+  border-radius:12px; padding:1.4rem 1.6rem;
+  flex-shrink:0; min-width:220px;
+}
+.auto-node .tn-label{ color:var(--green); }
+.auto-item{
+  display:flex; align-items:flex-start; gap:.5rem;
+  font-size:.77rem; color:var(--dim);
+  padding:.25rem 0;
+}
+.auto-dot{ width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px; }
+
+/* gate node */
+.gate-node{
+  background:var(--s1); border:1px solid var(--border2);
+  border-radius:12px; padding:1.4rem 1.6rem;
+  flex:1;
+}
+.gate-cols{ display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:.8rem; }
+.gate-col{ border-top:2px solid var(--border); padding-top:.6rem; }
+.gate-col-ae  { border-color:var(--gold); }
+.gate-col-csr { border-color:var(--sky);  }
+.gate-col-mkt { border-color:var(--red);  }
+.gate-owner{ font-size:.72rem; font-weight:600; margin-bottom:.45rem; }
+.gate-item{
+  display:flex; align-items:flex-start; gap:.4rem;
+  font-size:.73rem; color:var(--dim);
+  padding:.18rem 0;
+}
+.gate-box{
+  width:12px; height:12px; border:1.5px solid var(--dim2);
+  border-radius:2px; flex-shrink:0; margin-top:2px;
+}
+
+/* connectors */
+.connector{
+  display:flex; align-items:center;
+  padding:0 1rem; flex-shrink:0;
+  gap:.3rem;
+}
+.conn-line{ flex:1; height:2px; background:var(--border2); min-width:24px; }
+.conn-arrow{
+  width:0; height:0;
+  border-top:6px solid transparent;
+  border-bottom:6px solid transparent;
+  border-left:9px solid var(--dim2);
+  flex-shrink:0;
+}
+.conn-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.58rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--dim2); white-space:nowrap;
+  writing-mode:horizontal-tb;
+  display:flex; flex-direction:column; align-items:center; gap:.4rem;
+}
+
+/* vertical connector (gate → runway) */
+.v-connector{
+  display:flex; flex-direction:column; align-items:flex-start;
+  padding:12px 0 0 48px;
+  gap:0;
+}
+.v-conn-line{ width:2px; height:28px; background:var(--border2); }
+.v-conn-arrow{
+  width:0; height:0;
+  border-left:6px solid transparent;
+  border-right:6px solid transparent;
+  border-top:9px solid var(--dim2);
+  margin-left:-3px;
+}
+
+/* ══════════════════════════
+   PHASE 2 — 90-DAY RUNWAY
+══════════════════════════ */
+.runway-wrap{
+  background:var(--s1); border:1px solid var(--border2);
+  border-radius:16px; overflow:hidden;
+}
+
+/* timeline track */
+.runway-track{
+  padding:28px 32px 0;
+  position:relative;
+}
+.runway-spine{
+  position:absolute;
+  top:55px; left:32px; right:32px;
+  height:2px;
+  background:linear-gradient(to right, var(--green), var(--amber));
+  z-index:0;
+}
+
+.milestone-row{
+  display:grid;
+  grid-template-columns: repeat(7,1fr);
+  gap:0;
+  position:relative;
+  z-index:1;
+}
+
+.ms-node{
+  display:flex; flex-direction:column; align-items:center;
+  gap:0;
+}
+
+/* dot on spine */
+.ms-dot-wrap{
+  display:flex; flex-direction:column; align-items:center;
+  margin-bottom:16px;
+}
+.ms-dot{
+  width:24px; height:24px; border-radius:50%;
+  border:2px solid var(--dim2);
+  background:var(--s1);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'JetBrains Mono',monospace; font-size:.55rem;
+  color:var(--dim);
+  flex-shrink:0;
+  z-index:2; position:relative;
+}
+.ms-dot.go   { border-color:var(--green); background:rgba(52,211,153,.15); color:var(--green); }
+.ms-dot.crit { border-color:var(--red);   background:rgba(248,113,113,.15); color:var(--red);  width:28px;height:28px; }
+.ms-dot.mand { border-color:var(--amber); background:rgba(251,191,36,.15);  color:var(--amber);width:28px;height:28px; }
+
+/* milestone card */
+.ms-card{
+  background:var(--s2); border:1px solid var(--border);
+  border-radius:10px; padding:.9rem .85rem;
+  width:100%; text-align:center;
+  border-top:2px solid var(--border);
+}
+.ms-card.go   { border-top-color:var(--green); }
+.ms-card.crit { border-top-color:var(--red);   }
+.ms-card.mand { border-top-color:var(--amber); }
+
+.ms-day{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.65rem; color:var(--dim);
+  margin-bottom:.25rem;
+}
+.ms-day.go   { color:var(--green); }
+.ms-day.crit { color:var(--red);   }
+.ms-day.mand { color:var(--amber); }
+
+.ms-name{
+  font-family:'Sora',sans-serif;
+  font-size:.78rem; font-weight:700; color:var(--white);
+  line-height:1.25; margin-bottom:.4rem;
+}
+.ms-badge{
+  display:inline-block;
+  padding:.12rem .45rem; border-radius:4px;
+  font-size:.58rem; font-weight:700; letter-spacing:.05em;
+  margin-bottom:.45rem;
+}
+.badge-go   { background:rgba(52,211,153,.12);  color:var(--green); }
+.badge-crit { background:rgba(248,113,113,.1);  color:var(--red);   }
+.badge-mand { background:rgba(251,191,36,.1);   color:var(--amber); }
+.badge-norm { background:rgba(255,255,255,.06); color:var(--dim);   }
+
+.ms-owner{
+  font-size:.65rem; color:var(--dim);
+  border-top:1px solid var(--border);
+  padding-top:.4rem; margin-top:.2rem;
+}
+
+/* data chips */
+.ms-chips{
+  display:flex; flex-wrap:wrap; justify-content:center;
+  gap:.25rem; margin-top:.45rem;
+}
+.chip{
+  background:rgba(56,189,248,.08); border:1px solid rgba(56,189,248,.18);
+  border-radius:3px; padding:.12rem .38rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.58rem; color:var(--sky);
+  white-space:nowrap;
+}
+.chip-green {background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.18);color:var(--green);}
+.chip-amber {background:rgba(251,191,36,.08); border-color:rgba(251,191,36,.18); color:var(--amber);}
+.chip-red   {background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.18);color:var(--red);}
+.chip-dim   {background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1); color:var(--dim);}
+
+/* ══════════════════════════
+   SWIM LANES
+══════════════════════════ */
+.swim-wrap{
+  padding:0 32px 28px;
+  margin-top:24px;
+  border-top:1px solid var(--border);
+}
+.swim-header{
+  display:grid; grid-template-columns:90px 1fr;
+  padding:12px 0 4px;
+}
+.swim-header-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.6rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--dim2); padding-right:12px;
+}
+.swim-header-days{
+  display:grid; grid-template-columns:repeat(7,1fr);
+  gap:0;
+}
+.swim-day-label{
+  font-family:'JetBrains Mono',monospace; font-size:.58rem;
+  color:var(--dim2); text-align:center;
+}
+
+.swim-row{
+  display:grid; grid-template-columns:90px 1fr;
+  align-items:center;
+  padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.swim-row:last-child{ border-bottom:none; }
+.swim-role{
+  font-size:.7rem; font-weight:600;
+  padding-right:12px;
+}
+.swim-role.ae     { color:var(--gold);  }
+.swim-role.success{ color:var(--sky);   }
+.swim-role.product{ color:var(--green); }
+.swim-role.mkt    { color:var(--red);   }
+
+.swim-track{
+  display:grid; grid-template-columns:repeat(7,1fr);
+  gap:3px; align-items:center;
+}
+.swim-cell{
+  border-radius:5px; padding:.32rem .4rem;
+  font-size:.64rem; line-height:1.3;
+  text-align:center; min-height:28px;
+  display:flex; align-items:center; justify-content:center;
+}
+.swim-cell.empty{ background:transparent; }
+.swim-cell.ae-c  { background:rgba(244,169,64,.1);  color:var(--gold);  border:1px solid rgba(244,169,64,.2); }
+.swim-cell.sk-c  { background:rgba(56,189,248,.1);  color:var(--sky);   border:1px solid rgba(56,189,248,.2); }
+.swim-cell.pr-c  { background:rgba(52,211,153,.08); color:var(--green); border:1px solid rgba(52,211,153,.18);}
+.swim-cell.mk-c  { background:rgba(248,113,113,.08);color:var(--red);   border:1px solid rgba(248,113,113,.18);}
+.swim-cell.ae-h  { background:rgba(244,169,64,.2);  color:var(--gold);  border:1px solid rgba(244,169,64,.4); font-weight:600; }
+.swim-cell.sk-l  { background:rgba(56,189,248,.2);  color:var(--sky);   border:1px solid rgba(56,189,248,.4); font-weight:600; }
+.swim-cell.pr-s  { background:rgba(52,211,153,.14); color:var(--green); border:1px solid rgba(52,211,153,.3); font-weight:600;}
+.swim-cell.span2{ grid-column:span 2; }
+.swim-cell.span3{ grid-column:span 3; }
+.swim-cell.span4{ grid-column:span 4; }
+.swim-cell.span5{ grid-column:span 5; }
+.swim-cell.span7{ grid-column:span 7; }
+
+/* rule bar */
+.rule-bar{
+  margin:16px 32px 0;
+  background:rgba(244,169,64,.06); border:1px solid rgba(244,169,64,.2);
+  border-radius:8px; padding:.65rem 1rem;
+  font-size:.8rem; color:var(--gold); text-align:center;
+}
+.rule-bar strong{ font-weight:700; }
+
+/* ══════════════════════════
+   PHASE 3 — OUTCOMES
+══════════════════════════ */
+.outcomes-row{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1rem;
+}
+.outcome-card{
+  border-radius:12px; padding:1.4rem 1.5rem;
+  border:1px solid var(--border2);
+}
+.outcome-expand { background:rgba(52,211,153,.05);  border-color:rgba(52,211,153,.25); }
+.outcome-decline{ background:rgba(248,113,113,.05); border-color:rgba(248,113,113,.2); }
+.outcome-esc    { background:rgba(251,191,36,.05);  border-color:rgba(251,191,36,.2);  }
+
+.outcome-icon{
+  font-size:1.5rem; margin-bottom:.6rem;
+  display:block;
+}
+.outcome-title{
+  font-family:'Sora',sans-serif; font-size:1rem; font-weight:700;
+  margin-bottom:.5rem;
+}
+.outcome-expand  .outcome-title { color:var(--green); }
+.outcome-decline .outcome-title { color:var(--red);   }
+.outcome-esc     .outcome-title { color:var(--amber); }
+
+.outcome-steps{ list-style:none; }
+.outcome-steps li{
+  font-size:.78rem; color:var(--dim);
+  padding:.22rem 0;
+  display:flex; align-items:flex-start; gap:.5rem;
+}
+.outcome-steps li::before{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.62rem; flex-shrink:0; margin-top:2px;
+}
+.outcome-expand  .outcome-steps li::before { content:'→'; color:var(--green); }
+.outcome-decline .outcome-steps li::before { content:'→'; color:var(--red);   }
+.outcome-esc     .outcome-steps li::before { content:'→'; color:var(--amber); }
+
+/* ══════════════════════════
+   PHASE 4 — PIPELINE + TIERS
+══════════════════════════ */
+.bottom-row{
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:1rem;
+}
+.pipeline-card{
+  background:var(--s1); border:1px solid var(--border2);
+  border-radius:12px; padding:1.4rem 1.6rem;
+}
+.pipeline-rule{
+  display:flex; align-items:center; gap:1rem;
+  padding:.65rem 0;
+  border-bottom:1px solid var(--border);
+}
+.pipeline-rule:last-child{ border-bottom:none; }
+.pr-condition{
+  font-size:.8rem; color:var(--dim); flex:1;
+}
+.pr-arrow{ font-size:.8rem; color:var(--dim2); }
+.pr-dest{
+  font-size:.82rem; font-weight:600;
+}
+
+.tiers-card{
+  background:var(--s1); border:1px solid var(--border2);
+  border-radius:12px; padding:1.4rem 1.6rem;
+}
+.tier-row{
+  display:flex; align-items:center; gap:1rem;
+  padding:.5rem 0;
+  border-bottom:1px solid var(--border);
+}
+.tier-row:last-child{ border-bottom:none; }
+.tier-dot{ width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+.tier-name{ font-size:.82rem; font-weight:600; flex:1; color:var(--white); }
+.tier-price{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.74rem;
+}
+
+/* benchmark pill */
+.benchmark-strip{
+  background:rgba(52,211,153,.08); border:1px solid rgba(52,211,153,.2);
+  border-radius:8px; padding:.6rem 1rem;
+  margin-bottom:1rem;
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+}
+.bm-num{
+  font-family:'Sora',sans-serif; font-size:1.3rem; font-weight:800;
+  color:var(--green);
+}
+.bm-label{ font-size:.75rem; color:var(--dim); }
+.bm-case{
+  font-size:.73rem; color:var(--dim);
+  border-left:1px solid var(--border); padding-left:1rem;
+  line-height:1.5;
+}
+.bm-case strong{ color:var(--gold); }
+
+/* ══════════════════════════
+   ESCALATION TABLE
+══════════════════════════ */
+.esc-table{ width:100%; }
+.esc-row{
+  display:grid; grid-template-columns:1fr 20px 1fr;
+  align-items:center;
+  background:var(--s2); border:1px solid var(--border);
+  border-radius:7px;
+  overflow:hidden; margin-bottom:5px;
+}
+.esc-trigger{
+  padding:.65rem 1rem; font-size:.78rem; color:var(--dim);
+}
+.esc-mid{ color:var(--dim2); font-size:.75rem; text-align:center; }
+.esc-action{ padding:.65rem 1rem; font-size:.78rem; color:var(--white); }
+
+/* ══════════════════════════
+   LEGEND
+══════════════════════════ */
+.legend-bar{
+  background:var(--s1); border:1px solid var(--border2);
+  border-radius:8px; padding:.65rem 1.4rem;
+  display:flex; align-items:center; gap:1.6rem; flex-wrap:wrap;
+  margin-top:20px;
+}
+.legend-item{ display:flex; align-items:center; gap:.45rem; font-size:.72rem; color:var(--dim); }
+.legend-dot{ width:10px;height:10px;border-radius:50%;flex-shrink:0; }
+.legend-badge{
+  padding:.15rem .45rem; border-radius:3px;
+  font-size:.62rem; font-weight:700;
+}
+
+/* ══════════════════════════
+   PHASE LABELS (left gutter)
+══════════════════════════ */
+.phase-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.6rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--dim2); writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  user-select:none;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     HEADER
+═══════════════════════════════════ -->
+<header>
+  <div class="page">
+    <div class="hdr-left">
+      <div class="eyebrow label">PRAY.COM · SuperFunnel</div>
+      <h1>Process <span>Map</span></h1>
+      <p>From Closed Won to Signed Expansion — the complete AE + Ops flow</p>
+    </div>
+    <div class="hdr-stats">
+      <div class="hdr-stat">
+        <div class="sv">$15K</div>
+        <div class="sl">Pilot price</div>
+      </div>
+      <div class="hdr-stat">
+        <div class="sv">90</div>
+        <div class="sl">Days to expand</div>
+      </div>
+      <div class="hdr-stat">
+        <div class="sv">$100K</div>
+        <div class="sl">30-day benchmark</div>
+      </div>
+      <div class="hdr-stat">
+        <div class="sv">$250K</div>
+        <div class="sl">Annual potential</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- ═══════════════════════════════════
+       SECTION 1 — CLOSED WON → GATE
+  ═══════════════════════════════════ -->
+  <div class="map-section">
+    <div class="section-header">
+      <span class="section-tag">Phase 1</span>
+      <span class="section-title">Close → Automation → Pre-Launch Gate</span>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="trigger-row">
+
+      <!-- CLOSED WON -->
+      <div class="trigger-node" style="min-width:195px;border-top:3px solid var(--gold);">
+        <div class="tn-label label gold">Closed Won</div>
+        <div class="tn-title">Deal Record<br>Complete</div>
+        <div class="tn-sub" style="margin-top:.6rem;">
+          <div style="display:flex;flex-direction:column;gap:.22rem;">
+            <span style="display:flex;gap:.4rem;align-items:flex-start;font-size:.72rem;color:var(--dim);"><span style="color:var(--gold);flex-shrink:0;">✓</span>Deal Name, Owner, Stage</span>
+            <span style="display:flex;gap:.4rem;align-items:flex-start;font-size:.72rem;color:var(--dim);"><span style="color:var(--gold);flex-shrink:0;">✓</span>Leader Name + Goals</span>
+            <span style="display:flex;gap:.4rem;align-items:flex-start;font-size:.72rem;color:var(--dim);"><span style="color:var(--gold);flex-shrink:0;">✓</span>Contact with email + title</span>
+            <span style="display:flex;gap:.4rem;align-items:flex-start;font-size:.72rem;color:var(--dim);"><span style="color:var(--gold);flex-shrink:0;">✓</span>Product line item + signed quote</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONNECTOR -->
+      <div class="connector">
+        <div class="conn-line"></div>
+        <div class="conn-label"><span>AE</span><span>fills</span></div>
+        <div class="conn-line"></div>
+        <div class="conn-arrow"></div>
+      </div>
+
+      <!-- AUTOMATION -->
+      <div class="auto-node">
+        <div class="tn-label label" style="color:var(--green);margin-bottom:.55rem;">⚡ Automation Fires</div>
+        <div class="auto-item"><div class="auto-dot"></div>Creates <strong style="color:var(--white);">Leader record</strong> in HubSpot</div>
+        <div class="auto-item"><div class="auto-dot"></div>Creates <strong style="color:var(--white);">Onboarding Project</strong></div>
+        <div class="auto-item"><div class="auto-dot"></div>Notifies <strong style="color:var(--white);">Slack</strong> — all stakeholders</div>
+        <div class="auto-item"><div class="auto-dot"></div>Sends <strong style="color:var(--white);">welcome emails</strong> internal + external</div>
+        <div class="auto-item"><div class="auto-dot"></div>Places leader in correct <strong style="color:var(--white);">pipeline</strong></div>
+      </div>
+
+      <!-- CONNECTOR -->
+      <div class="connector">
+        <div class="conn-line"></div>
+        <div class="conn-label"><span>auto</span></div>
+        <div class="conn-line"></div>
+        <div class="conn-arrow"></div>
+      </div>
+
+      <!-- PRE-LAUNCH GATE -->
+      <div class="gate-node">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.2rem;">
+          <div class="tn-label label" style="color:var(--red);">🚦 Pre-Launch Gate</div>
+          <div>
+            <span class="pill pill-amber" style="font-size:.6rem;">Target: Day 21</span>
+            &nbsp;
+            <span class="pill pill-red" style="font-size:.6rem;">Hard limit: Day 28</span>
+          </div>
+        </div>
+        <div style="font-size:.72rem;color:var(--dim);margin-bottom:.6rem;">Product <strong style="color:var(--white);">cannot launch</strong> until all gates are cleared.</div>
+        <div class="gate-cols">
+          <div class="gate-col gate-col-csr">
+            <div class="gate-owner sky">Success / CSM</div>
+            <div class="gate-item"><span class="gate-box"></span>Client onboarded in PRAYStudio</div>
+            <div class="gate-item"><span class="gate-box"></span>Subs+ / donation infra configured</div>
+          </div>
+          <div class="gate-col gate-col-mkt">
+            <div class="gate-owner red">Marketing</div>
+            <div class="gate-item"><span class="gate-box"></span>Lead magnet setup complete</div>
+            <div class="gate-item"><span class="gate-box"></span>Creative assets → Product</div>
+          </div>
+          <div class="gate-col gate-col-ae">
+            <div class="gate-owner gold">AE</div>
+            <div class="gate-item"><span class="gate-box"></span>Contract signed</div>
+            <div class="gate-item"><span class="gate-box"></span>First meeting scheduled</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /trigger-row -->
+
+    <!-- vertical connector to runway -->
+    <div class="v-connector">
+      <div class="v-conn-line"></div>
+      <div class="v-conn-arrow"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SECTION 2 — 90-DAY RUNWAY
+  ═══════════════════════════════════ -->
+  <div class="map-section">
+    <div class="section-header">
+      <span class="section-tag">Phase 2</span>
+      <span class="section-title">The 90-Day Runway — Campaign Execution + AE Milestones</span>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="runway-wrap">
+
+      <div class="runway-track">
+        <!-- spine line -->
+        <div class="runway-spine"></div>
+
+        <!-- MILESTONE NODES -->
+        <div class="milestone-row">
+
+          <!-- Day 0 -->
+          <div class="ms-node">
+            <div class="ms-dot-wrap">
+              <div class="ms-dot go">0</div>
+            </div>
+            <div class="ms-card go">
+              <div class="ms-day go">Day 0</div>
+              <div class="ms-name">Launch<br>Confirmed</div>
+              <div class="ms-badge badge-go">GO</div>
+              <div class="ms-owner">AE sends · Product green-lit</div>
+            </div>
+          </div>
+
+          <!-- Day 7-10 -->
+          <div class="ms-node">
+            <div class="ms-dot-wrap">
+              <div class="ms-dot">T</div>
+            </div>
+            <div class="ms-card">
+              <div class="ms-day">Day 7–10</div>
+              <div class="ms-name">Technical<br>Onboarding</div>
+              <div class="ms-badge badge-norm">SETUP</div>
+              <div class="ms-owner">Success + Product</div>
+              <div class="ms-chips">
+                <span class="chip chip-dim">Tracking live</span>
+                <span class="chip chip-dim">Pixels verified</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Day 15 -->
+          <div class="ms-node">
+            <div class="ms-dot-wrap">
+              <div class="ms-dot">15</div>
+            </div>
+            <div class="ms-card">
+              <div class="ms-day">Day 15</div>
+              <div class="ms-name">Early Signal<br>Check</div>
+              <div class="ms-badge badge-norm">SIGNAL</div>
+              <div class="ms-owner">Success leads · AE aware</div>
+              <div class="ms-chips">
+                <span class="chip">Impressions</span>
+                <span class="chip">CPE</span>
+                <span class="chip">Emails</span>
+                <span class="chip">Early subs</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Day 30 -->
+          <div class="ms-node">
+            <div class="ms-dot-wrap">
+              <div class="ms-dot crit">30</div>
+            </div>
+            <div class="ms-card crit">
+              <div class="ms-day crit">Day 30</div>
+              <div class="ms-name">Momentum<br>Review</div>
+              <div class="ms-badge badge-crit">CRITICAL</div>
+              <div class="ms-owner">AE co-leads + Success</div>
+              <div class="ms-chips">
+                <span class="chip">Investment</span>
+                <span class="chip">CPS</span>
+                <span class="chip">Revenue</span>
+                <span class="chip">ELTR</span>
+                <span class="chip chip-amber">Book D60 here</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Day 60 -->
+          <div class="ms-node">
+            <div class="ms-dot-wrap">
+              <div class="ms-dot crit">60</div>
+            </div>
+            <div class="ms-card crit">
+              <div class="ms-day crit">Day 60</div>
+              <div class="ms-name">Expansion<br>Framing</div>
+              <div class="ms-badge badge-crit">CRITICAL</div>
+              <div class="ms-owner">AE leads · Expansion convo</div>
+              <div class="ms-chips">
+                <span class="chip chip-green">Conservative $15K</span>
+                <span class="chip chip-amber">Moderate $30K</span>
+                <span class="chip chip-red">Aggressive $50K+</span>
+                <span class="chip chip-amber">Book D75 here</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Day 75 -->
+          <div class="ms-node">
+            <div class="ms-dot-wrap">
+              <div class="ms-dot mand">75</div>
+            </div>
+            <div class="ms-card mand">
+              <div class="ms-day mand">Day 75</div>
+              <div class="ms-name">Proposal<br>Review</div>
+              <div class="ms-badge badge-mand">MANDATORY</div>
+              <div class="ms-owner">AE leads · Full proposal</div>
+              <div class="ms-chips">
+                <span class="chip">ROI trajectory</span>
+                <span class="chip">Rev / sub</span>
+                <span class="chip">Pricing justification</span>
+                <span class="chip chip-amber">Book D90 here</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Day 90 -->
+          <div class="ms-node">
+            <div class="ms-dot-wrap">
+              <div class="ms-dot mand">90</div>
+            </div>
+            <div class="ms-card mand">
+              <div class="ms-day mand">Day 90</div>
+              <div class="ms-name">Final<br>Decision</div>
+              <div class="ms-badge badge-mand">MANDATORY</div>
+              <div class="ms-owner">AE closes · 3 outcomes</div>
+              <div class="ms-chips">
+                <span class="chip chip-green">Expand</span>
+                <span class="chip chip-red">Decline</span>
+                <span class="chip chip-amber">Escalate</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /milestone-row -->
+      </div><!-- /runway-track -->
+
+      <div class="rule-bar">
+        <strong>Non-Negotiable Rule:</strong> Every meeting ends with the next meeting booked. No exceptions.
+        &nbsp;·&nbsp; AE automation trigger: HubSpot emails AE at <strong>Day 60</strong> to begin expansion process.
+      </div>
+
+      <!-- SWIM LANES -->
+      <div class="swim-wrap">
+        <div class="swim-header">
+          <div class="swim-header-label">Who / What</div>
+          <div class="swim-header-days">
+            <div class="swim-day-label">D0</div>
+            <div class="swim-day-label">D7-10</div>
+            <div class="swim-day-label">D15</div>
+            <div class="swim-day-label">D30</div>
+            <div class="swim-day-label">D60</div>
+            <div class="swim-day-label">D75</div>
+            <div class="swim-day-label">D90</div>
+          </div>
+        </div>
+
+        <!-- AE row -->
+        <div class="swim-row">
+          <div class="swim-role ae">AE</div>
+          <div class="swim-track">
+            <div class="swim-cell ae-c">Confirm launch + book D30</div>
+            <div class="swim-cell empty"></div>
+            <div class="swim-cell ae-c">Review snapshot</div>
+            <div class="swim-cell ae-h">Co-lead + Book D60</div>
+            <div class="swim-cell ae-h">Lead · Expansion framing</div>
+            <div class="swim-cell ae-h">Lead · Proposal</div>
+            <div class="swim-cell ae-h">Close</div>
+          </div>
+        </div>
+
+        <!-- Success row -->
+        <div class="swim-row">
+          <div class="swim-role success">Success</div>
+          <div class="swim-track">
+            <div class="swim-cell sk-c span2">Onboarding — PRAYStudio + infra</div>
+            <div class="swim-cell sk-l">Lead call</div>
+            <div class="swim-cell sk-c">Support AE</div>
+            <div class="swim-cell empty"></div>
+            <div class="swim-cell empty"></div>
+            <div class="swim-cell empty"></div>
+          </div>
+        </div>
+
+        <!-- Product row -->
+        <div class="swim-row">
+          <div class="swim-role product">Product</div>
+          <div class="swim-track">
+            <div class="swim-cell pr-c">Campaign live</div>
+            <div class="swim-cell pr-c">Verify tracking</div>
+            <div class="swim-cell pr-s">Data @ D15</div>
+            <div class="swim-cell pr-s">Full report @ D30</div>
+            <div class="swim-cell pr-s">3 scenarios @ D60</div>
+            <div class="swim-cell pr-s">Pricing data @ D75</div>
+            <div class="swim-cell pr-s">Summary / PM @ D90</div>
+          </div>
+        </div>
+
+        <!-- Marketing row -->
+        <div class="swim-row">
+          <div class="swim-role mkt">Marketing</div>
+          <div class="swim-track">
+            <div class="swim-cell mk-c span3">Lead magnet + creative assets</div>
+            <div class="swim-cell empty span4"></div>
+          </div>
+        </div>
+
+      </div><!-- /swim-wrap -->
+    </div><!-- /runway-wrap -->
+
+    <!-- vertical connector to outcomes -->
+    <div class="v-connector" style="padding-left:calc(6/7*100% - 12px);">
+      <div class="v-conn-line"></div>
+      <div class="v-conn-arrow"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SECTION 3 — OUTCOMES
+  ═══════════════════════════════════ -->
+  <div class="map-section">
+    <div class="section-header">
+      <span class="section-tag">Phase 3</span>
+      <span class="section-title">Day 90 Outcomes — Three Paths</span>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="outcomes-row">
+
+      <div class="outcome-card outcome-expand">
+        <span class="outcome-icon">✅</span>
+        <div class="outcome-title">Expansion Signed</div>
+        <ul class="outcome-steps">
+          <li>AE closes the new contract</li>
+          <li>Product scales campaign execution</li>
+          <li>Leader moves to Ministry SaaS Pipeline (if adding products)</li>
+          <li>New billing cycle begins immediately</li>
+        </ul>
+        <div style="margin-top:1rem;">
+          <div style="font-size:.68rem;color:var(--dim);margin-bottom:.5rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.1em;">Expansion Tiers</div>
+          <div style="display:flex;flex-direction:column;gap:.3rem;">
+            <div style="display:flex;justify-content:space-between;font-size:.75rem;padding:.3rem .6rem;background:rgba(52,211,153,.07);border-radius:5px;border:1px solid rgba(52,211,153,.15);">
+              <span style="color:var(--white);">Growth Starter</span>
+              <span class="green mono">$2,000/mo</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.75rem;padding:.3rem .6rem;background:rgba(244,169,64,.07);border-radius:5px;border:1px solid rgba(244,169,64,.15);">
+              <span style="color:var(--white);">Impact Pro</span>
+              <span class="gold mono">$5–6,000/mo</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.75rem;padding:.3rem .6rem;background:rgba(167,139,250,.07);border-radius:5px;border:1px solid rgba(167,139,250,.15);">
+              <span style="color:var(--white);">Kingdom Enterprise</span>
+              <span style="color:var(--purple);" class="mono">$8–10K+/mo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="outcome-card outcome-decline">
+        <span class="outcome-icon">❌</span>
+        <div class="outcome-title">Clear Decline</div>
+        <ul class="outcome-steps">
+          <li>AE documents reason in HubSpot</li>
+          <li>Notify leadership immediately</li>
+          <li>Product runs post-mortem report</li>
+          <li>Mark cancellation date + status = Churned</li>
+          <li>Pilot Pipeline: mark cancellation reason</li>
+        </ul>
+      </div>
+
+      <div class="outcome-card outcome-esc">
+        <span class="outcome-icon">⬆</span>
+        <div class="outcome-title">Executive Escalation</div>
+        <ul class="outcome-steps">
+          <li>AE surfaces the stall to leadership</li>
+          <li>Product provides all supporting data</li>
+          <li>Executive joins final conversation</li>
+          <li>Decision made within 14 days post-Day 90</li>
+          <li>Outcome tracked as Expand or Decline</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SECTION 4 — PIPELINE + ESCALATION
+  ═══════════════════════════════════ -->
+  <div class="map-section">
+    <div class="section-header">
+      <span class="section-tag">Reference</span>
+      <span class="section-title">Pipeline Assignment · Escalation Matrix · Benchmark</span>
+      <div class="section-rule"></div>
+    </div>
+
+    <div class="bottom-row">
+
+      <!-- PIPELINE + ESCALATION -->
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="pipeline-card">
+          <div style="margin-bottom:.8rem;" class="label dim">HubSpot Pipeline Assignment</div>
+          <div class="pipeline-rule">
+            <div class="pr-condition">SuperFunnel <strong style="color:var(--white);">only</strong></div>
+            <div class="pr-arrow">→</div>
+            <div class="pr-dest sky">Pilot Pipeline</div>
+          </div>
+          <div class="pipeline-rule">
+            <div class="pr-condition">SuperFunnel + <strong style="color:var(--white);">any other PRAY product</strong></div>
+            <div class="pr-arrow">→</div>
+            <div class="pr-dest gold">Ministry SaaS Pipeline</div>
+          </div>
+          <div class="pipeline-rule">
+            <div class="pr-condition">Renews same contract</div>
+            <div class="pr-arrow">→</div>
+            <div class="pr-dest dim">Stays on Pilot Pipeline</div>
+          </div>
+          <div class="pipeline-rule">
+            <div class="pr-condition">Cancels</div>
+            <div class="pr-arrow">→</div>
+            <div class="pr-dest red">Status = Churned</div>
+          </div>
+        </div>
+
+        <div class="pipeline-card">
+          <div style="margin-bottom:.8rem;" class="label dim">Escalation Matrix</div>
+          <div class="esc-table">
+            <div class="esc-row">
+              <div class="esc-trigger">Campaign underperforming</div>
+              <div class="esc-mid">→</div>
+              <div class="esc-action">Product optimizes → notifies AE → AE decides client comms</div>
+            </div>
+            <div class="esc-row">
+              <div class="esc-trigger">Expansion at risk (Day 60+)</div>
+              <div class="esc-mid">→</div>
+              <div class="esc-action">Product provides data → AE owns conversation → leadership if needed</div>
+            </div>
+            <div class="esc-row">
+              <div class="esc-trigger">Pre-launch stalled</div>
+              <div class="esc-mid">→</div>
+              <div class="esc-action">AE escalates immediately — every day late = day lost</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BENCHMARK + CASE STUDY + TIERS -->
+      <div class="tiers-card">
+        <div style="margin-bottom:.8rem;" class="label dim">Benchmark + Case Study</div>
+
+        <div class="benchmark-strip">
+          <div>
+            <div class="bm-num">$100K</div>
+            <div class="bm-label">Donor revenue target · first 30 days</div>
+          </div>
+          <div class="bm-case">
+            <strong>Jack Graham case study</strong><br>
+            4,000+ emails · 50+ subscribers in 30 days<br>
+            → Scaled to <strong>~$250K annual contract</strong>
+          </div>
+        </div>
+
+        <div style="margin-bottom:.8rem;" class="label dim">Operating Rules</div>
+        <div style="display:flex;flex-direction:column;gap:.35rem;">
+          <div style="display:flex;gap:.7rem;align-items:flex-start;font-size:.78rem;color:var(--dim);padding:.3rem 0;border-bottom:1px solid var(--border);">
+            <span class="mono gold" style="font-size:.65rem;flex-shrink:0;margin-top:2px;">01</span>
+            <span><strong style="color:var(--white);">AE = Quarterback</strong> — owns client from close to expansion</span>
+          </div>
+          <div style="display:flex;gap:.7rem;align-items:flex-start;font-size:.78rem;color:var(--dim);padding:.3rem 0;border-bottom:1px solid var(--border);">
+            <span class="mono gold" style="font-size:.65rem;flex-shrink:0;margin-top:2px;">02</span>
+            <span><strong style="color:var(--white);">Product = Autonomous</strong> — can start, pause, scale without AE approval; cannot skip data deliverables</span>
+          </div>
+          <div style="display:flex;gap:.7rem;align-items:flex-start;font-size:.78rem;color:var(--dim);padding:.3rem 0;border-bottom:1px solid var(--border);">
+            <span class="mono gold" style="font-size:.65rem;flex-shrink:0;margin-top:2px;">03</span>
+            <span><strong style="color:var(--white);">Data is not siloed</strong> — AE always knows numbers before the client does</span>
+          </div>
+          <div style="display:flex;gap:.7rem;align-items:flex-start;font-size:.78rem;color:var(--dim);padding:.3rem 0;">
+            <span class="mono gold" style="font-size:.65rem;flex-shrink:0;margin-top:2px;">04</span>
+            <span>If Product finds a campaign issue: <strong style="color:var(--white);">optimize first → notify AE → AE decides</strong> if client hears it</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /bottom-row -->
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend-bar">
+    <span class="label dim" style="margin-right:.5rem;">Legend</span>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green);"></div>Launch / Go</div>
+    <div class="legend-item"><div class="legend-badge badge-crit">CRITICAL</div>AE must be present, lead or co-lead</div>
+    <div class="legend-item"><div class="legend-badge badge-mand">MANDATORY</div>AE leads · must have next meeting booked on this call</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gold);"></div>AE action</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--sky);"></div>Success / CSM action</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green);"></div>Product data deliverable</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red);"></div>Marketing deliverable</div>
+  </div>
+
+</div><!-- /page -->
+
+</body>
+</html>
